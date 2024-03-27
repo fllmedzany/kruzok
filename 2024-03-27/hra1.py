@@ -65,4 +65,40 @@ class JednoduchaHra:
 
         # Pohyb kruhov
         for kruh in self.kruhy[:]:
-            self.platno.move(kruh, 
+            self.platno.move(kruh, 0, 5)
+            if self.platno.coords(kruh)[3] > self.vyska:
+                self.platno.delete(kruh)
+                self.kruhy.remove(kruh)
+                self.zivoty -= 1  # Odrátame život, ak kruh dosiahne dolnú hranicu
+
+        # Kontrola kolízií medzi guličkami a kruhmi
+        for gulicka in self.gulicky[:]:
+            g_x1, g_y1, g_x2, g_y2 = self.platno.coords(gulicka)
+            for kruh in self.kruhy[:]:
+                k_x1, k_y1, k_x2, k_y2 = self.platno.coords(kruh)
+                if k_x1 < g_x2 and k_x2 > g_x1 and k_y1 < g_y2 and k_y2 > g_y1:
+                    self.platno.delete(gulicka)
+                    self.gulicky.remove(gulicka)
+                    self.platno.delete(kruh)
+                    self.kruhy.remove(kruh)
+                    self.skore += 1
+                    break  # Pretože gulička už bola odstránená, skončíme vnorený cyklus
+
+        # Aktualizácia hry
+        self.okno.after(50, self.aktualizuj_hru)
+
+        # Kontrola konca hry
+        if self.zivoty <= 0:
+            self.koniec_hry()
+
+    def koniec_hry(self):
+        self.platno.delete("all")  # Vymažeme všetko z plátna
+        self.platno.create_text(self.sirka / 2, self.vyska / 2, text="Koniec hry", font=('Arial', 24), fill="red")
+        self.platno.create_text(self.sirka / 2, self.vyska / 2 + 30, text=f"Skóre: {self.skore}", font=('Arial', 20), fill="black")
+
+if __name__ == "__main__":
+    hlavne_okno = tk.Tk()
+    hra = JednoduchaHra(hlavne_okno)
+    hlavne_okno.mainloop()
+
+                             
