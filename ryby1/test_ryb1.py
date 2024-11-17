@@ -2,6 +2,7 @@ import cv2
 from ultralytics import YOLO
 import os
 
+#linka na test video  https://photos.app.goo.gl/NNWdHiWTHkW8r3qu8
 # Cesty k videu a výsledkom
 video_path = "data/akvarko1.mp4"  # Cesta k MP4 súboru
 output_frames_dir = "frames"  # Adresár na ukladanie snímok
