@@ -1,0 +1,1 @@
+skus mi spravit v pythone aplikaciu cez tk kniznicu hra15, ze mam pole 4x4 a v nom 15 cisiel, jedno policko je volne, na zaciatku sa ot zamiesa a ja ich mam usporiadat. chcem to ovladat myskou ze kliknem na cislo a on ho presunie na volnu poziciu, alebo sipkami, akoby som tahal cisla na tu volnu poziciu
