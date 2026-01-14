@@ -1,0 +1,88 @@
+from ursina import *
+import math
+
+app = Ursina()
+window.fps_counter.enabled = True
+mouse.locked = True
+
+DirectionalLight(direction=(1,-1,-1), shadows=True)
+AmbientLight(color=color.rgba(100,100,100,255))
+
+size = 80
+freq = 0.15
+height_scale = 8
+
+vertices = []
+triangles = []
+colors = []
+
+def height(x, z):
+    return (
+        math.sin(x * freq) +
+        math.cos(z * freq) +
+        math.sin((x + z) * freq * 0.7)
+    ) / 3 * height_scale
+
+def h_color(h):
+    if h < 1:
+        return color.rgb(40,120,40)
+    elif h < 4:
+        return color.rgb(80,160,80)
+    elif h < 6:
+        return color.rgb(120,110,90)
+    else:
+        return color.rgb(220,220,220)
+
+for x in range(size):
+    for z in range(size):
+        h = height(x, z)
+        y = h
+
+        i = len(vertices)
+        vertices += [
+            (x, y, z),
+            (x+1, y, z),
+            (x+1, y, z+1),
+            (x, y, z+1)
+        ]
+
+        triangles += [
+            (i, i+1, i+2),
+            (i, i+2, i+3)
+        ]
+
+        c = h_color(h)
+        colors += [c, c, c, c]
+
+terrain_mesh = Mesh(
+    vertices=vertices,
+    triangles=triangles,
+    colors=colors,
+    static=True
+)
+
+Entity(model=terrain_mesh)
+
+# ---------- KAMERA ----------
+player = Entity(position=(size/2, 12, size/2))
+camera.parent = player
+
+speed = 15
+mouse_sens = 40
+
+def update():
+    move = Vec3(
+        held_keys['d'] - held_keys['a'],
+        0,
+        held_keys['w'] - held_keys['s']
+    )
+
+    player.position += player.forward * move.z * speed * time.dt
+    player.position += player.right * move.x * speed * time.dt
+    player.y += (held_keys['space'] - held_keys['shift']) * speed * time.dt
+
+    player.rotation_y += mouse.velocity[0] * mouse_sens
+    camera.rotation_x -= mouse.velocity[1] * mouse_sens
+    camera.rotation_x = clamp(camera.rotation_x, -90, 90)
+
+app.run()
